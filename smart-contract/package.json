@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "deploy": "npx hardhat run scripts/deploy.js --network goerli", 
+    "testLocally": "npx hardhat test"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
     "hardhat": "^2.12.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.0"
+    "@openzeppelin/contracts": "^4.8.0",
+    "dotenv": "^16.0.3"
   }
 }
