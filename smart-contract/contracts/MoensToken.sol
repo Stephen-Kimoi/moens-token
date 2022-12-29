@@ -20,7 +20,6 @@ contract MoensToken is ERC20, Ownable {
     }
 
     function mint(uint256 amount) public payable {
-        console.log("Amount is: ", amount); 
         uint256 _requiredAmount = tokenPrice * amount; 
         require(msg.value >= _requiredAmount, "Ether sent is not enough!"); 
 
@@ -31,6 +30,8 @@ contract MoensToken is ERC20, Ownable {
         );
 
         _mint(msg.sender, _amountWithDecimals); 
+
+        console.log(msg.sender, " just got ", amount, " tokens"); 
     } 
 
     function claim() public {
