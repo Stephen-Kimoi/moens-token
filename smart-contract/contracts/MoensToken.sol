@@ -55,6 +55,16 @@ contract MoensToken is ERC20, Ownable {
 
     }
 
+    function withdraw() public onlyOwner {
+        uint256 amount = address(this).balance; 
+        require(amount > 0, "Nothing in the account to withdraw"); 
+
+        address _owner = owner(); 
+        (bool sent, ) = _owner.call{value: amount}(""); 
+
+        require(sent, "Falied to transfer amount"); 
+    }
+
     receive() external payable {} 
 
     fallback() external payable {} 
