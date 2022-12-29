@@ -13,6 +13,8 @@ contract MoensToken is ERC20, Ownable {
     uint256 public constant maxTotalSuppy = 10000 * 10**18; 
     IMoensNFTs MoensNFT; 
 
+    mapping (uint256 => bool) public tokenIdsClaimed;
+
     constructor(address _MoensNftContract) ERC20("Moens Token", "MTK") {
       MoensNFT = IMoensNFTs(_MoensNftContract);    
     }
@@ -30,6 +32,28 @@ contract MoensToken is ERC20, Ownable {
 
         _mint(msg.sender, _amountWithDecimals); 
     } 
+
+    function claim() public {
+        
+        address sender = msg.sender; 
+        uint256 balance = MoensNFT.balanceOf(sender); 
+
+        require(balance > 0, "You do not own any Moens NFTs"); 
+
+        uint256 amount = 0; 
+        for(uint256 i = 0; i < balance; i++){
+            uint256 tokenId = MoensNFT.tokenOfOwnerByIndex(sender, i);
+
+            if(!tokenIdsClaimed[tokenId]){
+                amount += 1; 
+                tokenIdsClaimed[tokenId] = true; 
+            }
+        }
+
+        require(amount > 0,"You have claimed all the tokens");
+        _mint(msg.sender, amount * tokenPerNft); 
+
+    }
 
     receive() external payable {} 
 
