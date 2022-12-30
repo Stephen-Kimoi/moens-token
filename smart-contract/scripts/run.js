@@ -15,6 +15,10 @@ async function main() {
     )
 
     await txn1.wait(); 
+
+    let txn2 = await deployedContract.withdraw(); 
+
+    await txn2.wait(); 
 }
 
 const runMain = async () => {
