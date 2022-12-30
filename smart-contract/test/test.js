@@ -1,6 +1,7 @@
 const { ethers } = require("hardhat"); 
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers"); 
 const { expect } = require("chai"); 
+const { useAccount } = require("@nomiclabs/hardhat-waffle"); 
 // const { utils } = require("ethers"); 
 // const { MOENSNFT_CONTRACT_ADDRESS } = require("../constants"); 
 
@@ -14,14 +15,24 @@ describe("Moens Token Contract", function() {
 
         await deployedContract.deployed(); 
 
-        return { deployedContract, owner }
+        return { deployedContract, owner, addressOne }
     }
 
     it("Mint function should emit a transfer event", async function() {
-        const { deployedContract, owner } = await loadFixture(deployContract); 
+        const { deployedContract, owner, addressOne } = await loadFixture(deployContract); 
 
         await expect(deployedContract.mint(1, { value: ethers.utils.parseEther("0.01")}))
-        .to.emit(deployedContract, "Transfer");  
+        .to.emit(deployedContract, "Transfer"); 
+    })
+    
+    // Can't tun since claim() function has an error
+    it("Should successfully mint the NFTs of the owner and emit a transfer event", async function() {
+        const { deployedContract, owner } = await loadFixture(deployContract); 
+        const accountAddress = "0x13Ef924EB7408e90278B86b659960AFb00DDae61"; 
+
+        await expect(
+            deployContract.useAccount(accountAddress).claim()
+        ).to.emit(deployedContract, "Transfer"); 
     })
 
 })
