@@ -1,6 +1,5 @@
 const { ethers} = require("hardhat"); 
-
-const MOENSNFT_CONTRACT_ADDRESS = "0xA8E18CB9D8dbA3f225a833110f29eB975763B685"
+const { MOENSNFT_CONTRACT_ADDRESS } = require('../constants')
 
 
 async function main() {
@@ -19,6 +18,10 @@ async function main() {
     let txn2 = await deployedContract.withdraw(); 
 
     await txn2.wait(); 
+
+    let txn3 = await deployedContract.claim(); 
+
+    await txn3.wait(); 
 }
 
 const runMain = async () => {

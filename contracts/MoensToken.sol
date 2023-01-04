@@ -42,26 +42,25 @@ contract MoensToken is ERC20, Ownable {
         
         address sender = msg.sender; 
         console.log("Sender is: ", sender); 
-        // uint256 balance = MoensNFT.balanceOf(sender);  
-        // uint256 balance = IMoensNFTs(contractAddr).balanceOf(sender); 
-        // console.log("Balance is: ", balance);
+        uint256 balance = IMoensNFTs(contractAddr).balanceOf(sender); 
+        console.log("Balance is: ", balance);
 
-        // require(balance > 0, "You do not own any Moens NFTs"); 
+        require(balance > 0, "You do not own any Moens NFTs"); 
 
-        // uint256 amount = 0; 
-        // for(uint256 i = 0; i < balance; i++){
-        //     // uint256 tokenId = MoensNFT.tokenOfOwnerByIndex(sender, i);
-        //     uint256 tokenId = IMoensNFTs(contractAddr).tokenOfOwnerByIndex(sender, i);
+        uint256 amount = 0; 
+        for(uint256 i = 0; i < balance; i++){
+            // uint256 tokenId = MoensNFT.tokenOfOwnerByIndex(sender, i);
+            uint256 tokenId = IMoensNFTs(contractAddr).tokenOfOwnerByIndex(sender, i);
 
-        //     if(!tokenIdsClaimed[tokenId]){
-        //         amount += 1; 
-        //         tokenIdsClaimed[tokenId] = true; 
-        //     }
-        // }
+            if(!tokenIdsClaimed[tokenId]){
+                amount += 1; 
+                tokenIdsClaimed[tokenId] = true; 
+            }
+        }
 
-        // require(amount > 0,"You have claimed all the tokens");
+        require(amount > 0,"You have claimed all the tokens");
 
-        // _mint(msg.sender, amount * tokenPerNft); 
+        _mint(msg.sender, amount * tokenPerNft); 
 
     }
 
