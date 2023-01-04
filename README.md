@@ -1,13 +1,8 @@
-# Sample Hardhat Project
+# MOENS TOKENS (MTK)
+The maximum supply of the tokens is `10,000` 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+The price of one token is `0.001 eth`
 
-Try running some of the following tasks:
+The tokens that one can claim if they hold one of [MoensNFT's](https://github.com/Stephen-Kimoi/NFT-Collection-v2) is `10 MTK`; 
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+
