@@ -16,7 +16,7 @@ const mintTokens = async() => {
     const mint = await contractInstance.methods.mint(1).send( 
         {
             from: accountAddress, 
-            value: utils.parseEther("0.1"), 
+            value: utils.parseEther("0.001"), 
             gasPrice: "20000000000",
             gas: "21204",
             debug: true, 
