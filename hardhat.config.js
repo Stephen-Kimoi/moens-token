@@ -7,7 +7,9 @@ module.exports = {
   networks: {
     goerli: {
       url: process.env.QUICKNODE_HTTP_URL, 
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY], 
+      gas: 2100000,
+      gasPrice: 8000000000
     }
   }
 };
