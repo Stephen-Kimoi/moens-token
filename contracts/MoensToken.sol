@@ -26,7 +26,7 @@ contract MoensToken is ERC20, Ownable {
         uint256 _requiredAmount = tokenPrice * amount; 
         require(msg.value >= _requiredAmount, "Ether sent is not enough!"); 
 
-        uint256 _amountWithDecimals = amount * 10**18; 
+        uint256 _amountWithDecimals = amount * 10 ** 18; 
         require(
             (totalSupply() + _amountWithDecimals) <= maxTotalSuppy, 
             "Amount exceeds maximum total supply"
