@@ -1,7 +1,7 @@
 const Web3 = require("web3"); 
 const { utils } = require("ethers"); 
 require("dotenv").config({ path: ".env" }); 
-const { MOENSNFT_CONTRACT_ADDRESS, contractAbi, contractAddress } = require('./constants')
+const { MOENSNFT_CONTRACT_ADDRESS, contractAbi, contractAddress } = require('./frontend/constants').default
 
 const accountAddress = process.env.ACCOUNT_ADDRESS; 
 const privateKey = process.env.PRIVATE_KEY; 

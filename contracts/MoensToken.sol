@@ -12,6 +12,7 @@ contract MoensToken is ERC20, Ownable {
     uint256 public constant tokenPrice = 0.001 ether; 
     uint256 public constant tokenPerNft = 10 * 10**18; 
     uint256 public constant maxTotalSuppy = 10000 * 10**18; 
+    uint256 public remainingSupply; 
     address contractAddr; 
     // IMoensNFTs MoensNFT; 
 
@@ -22,7 +23,7 @@ contract MoensToken is ERC20, Ownable {
         contractAddr = _MoensNftContract; 
     }
 
-    function mint(uint256 amount) public payable {
+    function mint(uint256 amount) public payable returns (uint256) {
         uint256 _requiredAmount = tokenPrice * amount; 
         require(msg.value >= _requiredAmount, "Ether sent is not enough!"); 
 
@@ -34,8 +35,15 @@ contract MoensToken is ERC20, Ownable {
 
         _mint(msg.sender, _amountWithDecimals); 
 
-        console.log(msg.sender, " just got ", amount, " tokens"); 
+        // remainingSupply = calculateRemainingSupply(amount);
     } 
+
+    function calculateRemainingSupply() public returns (uint256){
+        // uint256 amountWithDecimals = amount * 10 ** 18; 
+        // uint256 remaining = maxTotalSuppy - totalSupply(); 
+        // return remaining; 
+        return totalSupply(); 
+    }
 
     // THIS FUNCTION HAS AN ERROR
     function claim() public {
