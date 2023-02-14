@@ -15,6 +15,8 @@ function App() {
   const [mtkBalance, setMtkBalance] = useState(0); 
   const [mintedMTK, setMintedMtk] = useState(0); 
   const [unmintedMtk, setUnmintedMtk] = useState(0); 
+  const [buyTab, setBuyTab] = useState(false); 
+  const [claimTab, setClaimTab] = useState(false); 
 
   const setChainName = async () => {
     try {
@@ -171,11 +173,21 @@ function App() {
         { 
           walletConnected  && (
             <div className='buttons'>
-               <button>
+               <button
+                onClick={ () => { 
+                  setBuyTab(curr => !curr)
+                  setClaimTab(false)
+                }}
+               >
                   Buy Tokens
                </button> 
 
-               <button>
+               <button 
+                onClick={ () => { 
+                  setClaimTab(curr => !curr)
+                  setBuyTab(false)
+                }} 
+               >
                  Claim Tokens
                </button>
             </div>
@@ -183,7 +195,7 @@ function App() {
         }
       
       {
-        walletConnected && (
+        walletConnected && buyTab && (
           <div className='mint'>
             <div>
               <input 
@@ -200,6 +212,14 @@ function App() {
                 That will cost you { ethAmount } ETH 
               </p>
             </div>
+          </div>
+        )
+      }
+
+      {
+        walletConnected && claimTab && (
+          <div>
+            Claim Tab
           </div>
         )
       }
