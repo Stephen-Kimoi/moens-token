@@ -7,11 +7,14 @@ import { utils } from 'ethers';
 // import { ethers } from 'ethers';
 
 function App() {
-  const [count, setCount] = useState(0)
   const [walletConnected, setWalletConnected] = useState(); 
   const [walletAddress, setWalletAddress] = useState(); 
   const [currentChainId, setCurrentChainId] = useState(""); 
-
+  const [ethAmount, setEthAmount] = useState(0);  
+  const [ethBalance, setEthBalance] = useState(0); 
+  const [mtkBalance, setMtkBalance] = useState(0); 
+  const [mintedMTK, setMintedMtk] = useState(0); 
+  const [unmintedMtk, setUnmintedMtk] = useState(0); 
 
   const setChainName = async () => {
     try {
@@ -70,20 +73,23 @@ function App() {
     }
     setChainName(); 
     connectWallet(); 
-    window.location.reload(); 
+    // window.location.reload(); 
   } 
 
   const getBalances = async () => {
     console.log('Getting balances...'); 
     try {
-      const mtkContract = await moensTokenContract(false); 
-      const mtkContract2 = await moensTokenContract(true); 
+      const { mtkContract, provOrSigner, address } = await moensTokenContract(false); 
       const mintedTokens = await mtkContract.totalSupply(); 
-      const addressBalance = await mtkContract.balanceOf("0x13Ef924EB7408e90278B86b659960AFb00DDae61"); 
+      const ethBalanceBigNum = await provOrSigner.getBalance(address); 
+      const addressBalance = await mtkContract.balanceOf(address); 
+      const remainingTokens = 10000 - utils.formatEther(mintedTokens); 
       // const remainingTokens = await mtkContract2.calculateRemainingSupply(); 
-      console.log('Minted tokens are: ', utils.formatEther(mintedTokens)); 
-      console.log('Address balance is: ', utils.formatEther(addressBalance)); 
-      // console.log('Remaining tokens: ', utils.formatEther(remainingTokens)); 
+      setUnmintedMtk(remainingTokens); 
+      setMintedMtk(utils.formatEther(mintedTokens)); 
+      setMtkBalance(utils.formatEther(addressBalance));
+      setEthBalance(utils.formatEther(ethBalanceBigNum)); 
+      console.log('Eth : ', utils.formatEther(ethBalanceBigNum)); 
     } catch(error){
       console.error(error); 
     }
@@ -92,15 +98,17 @@ function App() {
   const mintToken = async () => {
     console.log("Minting token...")
     try {
-      const mtkContract  = await moensTokenContract(true); 
+      console.log("That will cost you: ", ethAmount); 
+      const { mtkContract }  = await moensTokenContract(true); 
       const tx = await mtkContract.mint(2, {
-        value: utils.parseEther("0.002")
+        value: utils.parseEther(ethAmount.toString())
       }); 
       console.log("Sending tokens...."); 
       await tx.wait(); 
       
       console.log("Tokens bought succesfully!"); 
       getBalances(); 
+      setEthAmount(0); 
     } catch (error){
       console.error(error)
     }
@@ -112,9 +120,9 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Moens Tokens</h1>
    
       <div className="card">
+        <h1>Moens<br/>Tokens</h1>
         {
           walletConnected ? (
             <p>
@@ -135,6 +143,44 @@ function App() {
           )
         }
       </div> 
+
+        <div className='balances'>
+
+            <div className='account-balances'>
+              <h2>YOUR BALANCE</h2>
+              <p>Your ETH balance is: { ethBalance } </p>
+              <p>Your MTK balance is: { mtkBalance } </p>
+            </div>
+
+            <div className='reserve-balances'>
+              <h2>MTK RESERVE BALANCE</h2>
+              <p>Total minted MTK tokens are: { mintedMTK } </p>
+              <p>Remaining MTK tokens to be minted are: { unmintedMtk } </p>
+            </div>
+            
+        </div>
+
+        {
+          !walletConnected && (
+            <div className='warning'>
+              Connect your wallet to continue
+            </div>
+          )
+        }
+
+        { 
+          walletConnected  && (
+            <div className='buttons'>
+               <button>
+                  Buy Tokens
+               </button> 
+
+               <button>
+                 Claim Tokens
+               </button>
+            </div>
+          )
+        }
       
       {
         walletConnected && (
@@ -143,21 +189,20 @@ function App() {
               <input 
                 type="number"
                 placeholder="Amount of MTK you want"
-                onChange={ (e) => {
-                  
-                }}
+                onChange={ (e) => setEthAmount(
+                  e.target.value * 0.001
+                )}
               />
               <button onClick={mintToken}>
                 Buy Token
               </button>
+              <p>
+                That will cost you { ethAmount } ETH 
+              </p>
             </div>
           </div>
         )
       }
-      
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }

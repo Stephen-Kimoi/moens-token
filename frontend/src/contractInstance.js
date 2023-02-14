@@ -36,6 +36,8 @@ export const moensTokenContract = async (signer) => {
   try {
     let mtkContract; 
     const provOrSigner = await getProviderOrSigner(signer); 
+    const signerForAmount = await getProviderOrSigner(true); 
+    const address = await signerForAmount.getAddress(); 
     if (signer) {
       console.log(signer)
       mtkContract = new Contract(
@@ -51,7 +53,7 @@ export const moensTokenContract = async (signer) => {
       )
     } 
   
-    return mtkContract; 
+    return { mtkContract, provOrSigner, address }; 
 
   } catch (error){
     console.error(error)
