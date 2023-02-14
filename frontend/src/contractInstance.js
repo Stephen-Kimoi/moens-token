@@ -1,4 +1,4 @@
-import { contractAbi, contractAddress } from "../constants"; 
+import { contractAbi, contractAddress, nftContractAbi, nftContractAddress } from "../constants"; 
 import Web3Modal, { providers } from "web3modal";
 import { ethers, Contract } from 'ethers';
 
@@ -39,7 +39,6 @@ export const moensTokenContract = async (signer) => {
     const signerForAmount = await getProviderOrSigner(true); 
     const address = await signerForAmount.getAddress(); 
     if (signer) {
-      console.log(signer)
       mtkContract = new Contract(
         contractAddress, 
         contractAbi, 
@@ -55,6 +54,32 @@ export const moensTokenContract = async (signer) => {
   
     return { mtkContract, provOrSigner, address }; 
 
+  } catch (error){
+    console.error(error)
+  }
+}
+
+export const moensNftContract = async (signer) => {
+  try {
+    let nftContract;  
+    const provOrSigner = await getProviderOrSigner(signer); 
+    const signerForAmount = await getProviderOrSigner(true); 
+    const address = await signerForAmount.getAddress(); 
+    if (signer) {
+      nftContract = new Contract(
+        nftContractAddress, 
+        nftContractAbi, 
+        provOrSigner
+      );  
+    } else {
+      nftContract = new Contract(
+        nftContractAddress, 
+        nftContractAbi, 
+        provOrSigner
+      )
+    } 
+  
+    return { nftContract, provOrSigner, address };  
   } catch (error){
     console.error(error)
   }

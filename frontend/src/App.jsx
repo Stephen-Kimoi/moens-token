@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { contractAddress } from "../constants"; 
-import { moensTokenContract } from './contractInstance';
-import { utils } from 'ethers';
+import { moensNftContract, moensTokenContract } from './contractInstance';
+import { BigNumber, utils } from 'ethers';
 // import { ethers } from 'ethers';
 
 function App() {
@@ -11,12 +11,14 @@ function App() {
   const [walletAddress, setWalletAddress] = useState(); 
   const [currentChainId, setCurrentChainId] = useState(""); 
   const [ethAmount, setEthAmount] = useState(0);  
+  const [mtkAmount, setMtkAmount] = useState(0);
   const [ethBalance, setEthBalance] = useState(0); 
   const [mtkBalance, setMtkBalance] = useState(0); 
   const [mintedMTK, setMintedMtk] = useState(0); 
   const [unmintedMtk, setUnmintedMtk] = useState(0); 
   const [buyTab, setBuyTab] = useState(false); 
   const [claimTab, setClaimTab] = useState(false); 
+  const [nftBalance, setNftBalance] = useState(0); 
 
   const setChainName = async () => {
     try {
@@ -100,9 +102,8 @@ function App() {
   const mintToken = async () => {
     console.log("Minting token...")
     try {
-      console.log("That will cost you: ", ethAmount); 
       const { mtkContract }  = await moensTokenContract(true); 
-      const tx = await mtkContract.mint(2, {
+      const tx = await mtkContract.mint(mtkAmount, {
         value: utils.parseEther(ethAmount.toString())
       }); 
       console.log("Sending tokens...."); 
@@ -116,8 +117,22 @@ function App() {
     }
   }
 
+  const nftBalances = async () => {
+    console.log("Getting nft balance..."); 
+    try {
+      console.log("That will cost you: ", ethAmount); 
+      const { nftContract ,provOrSigner, address} = await moensNftContract(false); 
+      const addressBalance = await nftContract.balanceOf(address); 
+      console.log("Nft balance is: ", Number(addressBalance)); 
+      setNftBalance(Number(addressBalance)); 
+    } catch(error){
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     getBalances(); 
+    nftBalances(); 
   })
 
   return (
@@ -201,9 +216,10 @@ function App() {
               <input 
                 type="number"
                 placeholder="Amount of MTK you want"
-                onChange={ (e) => setEthAmount(
-                  e.target.value * 0.001
-                )}
+                onChange={ (e) => { 
+                  setEthAmount(e.target.value * 0.001); 
+                  setMtkAmount(e.target.value); 
+                }}
               />
               <button onClick={mintToken}>
                 Buy Token
@@ -219,7 +235,9 @@ function App() {
       {
         walletConnected && claimTab && (
           <div>
-            Claim Tab
+            <p>You have { nftBalance } Moens NFTs</p>
+            <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
+            <p></p>
           </div>
         )
       }
