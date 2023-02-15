@@ -26,18 +26,21 @@ a:hover {
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  margin: 0.5rem;
+  border: none;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #c43939;
   cursor: pointer;
   transition: border-color 0.25s;
+  background: linear-gradient(90deg, rgb(194, 183, 183), rgb(151, 135, 135), rgb(185, 185, 165));
 }
 
 button:hover {
   border-color: #646cff;
+  background: linear-gradient(90deg, rgb(158, 147, 147), rgb(163, 156, 156), rgb(109, 109, 106));
 }
 button:focus,
 button:focus-visible {

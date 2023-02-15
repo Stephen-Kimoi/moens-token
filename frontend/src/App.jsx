@@ -4,6 +4,7 @@ import './App.css'
 import { contractAddress } from "../constants"; 
 import { moensNftContract, moensTokenContract } from './contractInstance';
 import { BigNumber, utils } from 'ethers';
+import Loader from './Loader/Loader';
 // import { ethers } from 'ethers';
 
 function App() {
@@ -20,6 +21,9 @@ function App() {
   const [claimTab, setClaimTab] = useState(false); 
   const [nftBalance, setNftBalance] = useState(0); 
   const [mtkToBeClaimed, setMtkToBeClaimed] = useState(0); 
+  const [loading, setLoading] = useState(false); 
+  const [success, setSuccess] = useState(false); 
+  const [error, setError] = useState(false); 
 
   const setChainName = async () => {
     try {
@@ -42,6 +46,7 @@ function App() {
 
   const connectWallet = async () => { 
     console.log("Connecting wallet")
+    setLoading(true); 
     try { 
       const { ethereum } = window; 
       
@@ -59,10 +64,18 @@ function App() {
       console.log("Account connected is: ", account); 
 
       setChainName(); 
-
+      setSuccess(true)
+      setTimeout(() => {
+        setSuccess(false); 
+      }, 5000); 
     } catch (error) {
       console.error(error)
+      setTimeout(() => {
+        setError(true); 
+      }, 5000); 
+      setError(false)
     }  
+    setLoading(false); 
   } 
 
   const changeChainId = async () => {
@@ -102,10 +115,12 @@ function App() {
 
   const mintToken = async () => {
     console.log("Minting token...")
+    setLoading(true); 
     try {
       const { mtkContract }  = await moensTokenContract(true); 
       const tx = await mtkContract.mint(mtkAmount, {
-        value: utils.parseEther(ethAmount.toString())
+        value: utils.parseEther(ethAmount.toString()),
+        gasLimit: 100000,
       }); 
       console.log("Sending tokens...."); 
       await tx.wait(); 
@@ -113,8 +128,14 @@ function App() {
       console.log("Tokens bought succesfully!"); 
       getBalances(); 
       setEthAmount(0); 
+      setSuccess(true); 
     } catch (error){
       console.error(error)
+      setError(true); 
+      setTimeout(() => {
+        setError(false)
+        setLoading(false)
+      }, 5000)
     }
   }
 
@@ -180,7 +201,13 @@ function App() {
         </div>
       
        
-        <div className='body'>
+        <div className='body'> 
+          {
+            loading && (
+              <Loader loading={loading} success={success} error={error} />
+            )
+          }
+
           <div className='balances'>
               <div className='account-balances'>
                 <h2>YOUR BALANCE</h2>
@@ -230,6 +257,7 @@ function App() {
         {
           walletConnected && buyTab && (
             <div className='mint'>
+              <h2>Buy Tokens</h2>
               <div>
                 <input 
                   type="number"
@@ -253,7 +281,7 @@ function App() {
         {
           walletConnected && claimTab && (
             <div> 
-
+              <h2>Claim Tokens</h2>
               <div>
                 <p>You have { nftBalance } Moens NFTs</p>
                 <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
