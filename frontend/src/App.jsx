@@ -155,13 +155,13 @@ function App() {
     console.log('Claiming tokens...'); 
     try {
       const { mtkContract } = await moensTokenContract(true); 
-      const tx = await mtkContract.claim( {
+      const tx = await mtkContract.claim(5, {
         gasLimit: 100000, 
       }); 
       console.log("Sending your tokens..."); 
       await tx.wait(); 
       console.log('Tokens sent succesfully!'); 
-      console.log("Blc: ", Number(tx)); 
+      getBalances();       
     } catch(error) {
       console.error(error)
     }
