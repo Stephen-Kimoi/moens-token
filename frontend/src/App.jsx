@@ -19,6 +19,7 @@ function App() {
   const [buyTab, setBuyTab] = useState(false); 
   const [claimTab, setClaimTab] = useState(false); 
   const [nftBalance, setNftBalance] = useState(0); 
+  const [mtkToBeClaimed, setMtkToBeClaimed] = useState(0); 
 
   const setChainName = async () => {
     try {
@@ -120,12 +121,27 @@ function App() {
   const nftBalances = async () => {
     console.log("Getting nft balance..."); 
     try {
-      console.log("That will cost you: ", ethAmount); 
       const { nftContract ,provOrSigner, address} = await moensNftContract(false); 
       const addressBalance = await nftContract.balanceOf(address); 
-      console.log("Nft balance is: ", Number(addressBalance)); 
       setNftBalance(Number(addressBalance)); 
+      setMtkToBeClaimed(Number(addressBalance) * 10); 
     } catch(error){
+      console.error(error)
+    }
+  } 
+
+  const claimNfts = async () => {
+    console.log('Claiming tokens...'); 
+    try {
+      const { mtkContract } = await moensTokenContract(true); 
+      const tx = await mtkContract.claim( {
+        gasLimit: 100000, 
+      }); 
+      console.log("Sending your tokens..."); 
+      await tx.wait(); 
+      console.log('Tokens sent succesfully!'); 
+      console.log("Blc: ", Number(tx)); 
+    } catch(error) {
       console.error(error)
     }
   }
@@ -139,7 +155,9 @@ function App() {
     <div className="App">
    
       <div className="card">
-        <h1>Moens<br/>Tokens</h1>
+
+        <div className="header">
+        <h1>Moens Tokens</h1>
         {
           walletConnected ? (
             <p>
@@ -155,92 +173,104 @@ function App() {
         {
           walletConnected && currentChainId != "Goerli Test Network" && (
             <button onClick={changeChainId}>
-               Switch to goerli
+                Switch to goerli
             </button>
           )
         }
-      </div> 
-
-        <div className='balances'>
-
-            <div className='account-balances'>
-              <h2>YOUR BALANCE</h2>
-              <p>Your ETH balance is: { ethBalance } </p>
-              <p>Your MTK balance is: { mtkBalance } </p>
-            </div>
-
-            <div className='reserve-balances'>
-              <h2>MTK RESERVE BALANCE</h2>
-              <p>Total minted MTK tokens are: { mintedMTK } </p>
-              <p>Remaining MTK tokens to be minted are: { unmintedMtk } </p>
-            </div>
-            
         </div>
+      
+       
+        <div className='body'>
+          <div className='balances'>
+              <div className='account-balances'>
+                <h2>YOUR BALANCE</h2>
+                <p>Your ETH balance is: { ethBalance } </p>
+                <p>Your MTK balance is: { mtkBalance } </p>
+              </div>
+
+              <div className='reserve-balances'>
+                <h2>MTK RESERVE BALANCE</h2>
+                <p>Total minted MTK tokens are: { mintedMTK } </p>
+                <p>Remaining MTK tokens to be minted are: { unmintedMtk } </p>
+              </div>
+          </div>
+
+          {
+            !walletConnected && (
+              <div className='warning'>
+                Connect your wallet to continue
+              </div>
+            )
+          }
+
+          { 
+            walletConnected  && (
+              <div className='buttons'>
+                  <button
+                  onClick={ () => { 
+                    setBuyTab(curr => !curr)
+                    setClaimTab(false)
+                  }}
+                  >
+                    Buy Tokens
+                  </button> 
+
+                  <button 
+                  onClick={ () => { 
+                    setClaimTab(curr => !curr)
+                    setBuyTab(false)
+                  }} 
+                  >
+                    Claim Tokens
+                  </button>
+              </div>
+            )
+          }
+        
+        {
+          walletConnected && buyTab && (
+            <div className='mint'>
+              <div>
+                <input 
+                  type="number"
+                  placeholder="Amount of MTK you want"
+                  onChange={ (e) => { 
+                    setEthAmount(e.target.value * 0.001); 
+                    setMtkAmount(e.target.value); 
+                  }}
+                />
+                <button onClick={mintToken}>
+                  Buy Token
+                </button>
+                <p>
+                  That will cost you { ethAmount } ETH 
+                </p>
+              </div>
+            </div>
+          )
+        }
 
         {
-          !walletConnected && (
-            <div className='warning'>
-              Connect your wallet to continue
+          walletConnected && claimTab && (
+            <div> 
+
+              <div>
+                <p>You have { nftBalance } Moens NFTs</p>
+                <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
+              </div>
+
+              <div>
+                <p>You can only claim { mtkToBeClaimed } Moens Tokens</p>
+                <button onClick={claimNfts}>
+                  Claim your tokens
+                </button>
+              </div>
+
             </div>
           )
         }
-
-        { 
-          walletConnected  && (
-            <div className='buttons'>
-               <button
-                onClick={ () => { 
-                  setBuyTab(curr => !curr)
-                  setClaimTab(false)
-                }}
-               >
-                  Buy Tokens
-               </button> 
-
-               <button 
-                onClick={ () => { 
-                  setClaimTab(curr => !curr)
-                  setBuyTab(false)
-                }} 
-               >
-                 Claim Tokens
-               </button>
-            </div>
-          )
-        }
-      
-      {
-        walletConnected && buyTab && (
-          <div className='mint'>
-            <div>
-              <input 
-                type="number"
-                placeholder="Amount of MTK you want"
-                onChange={ (e) => { 
-                  setEthAmount(e.target.value * 0.001); 
-                  setMtkAmount(e.target.value); 
-                }}
-              />
-              <button onClick={mintToken}>
-                Buy Token
-              </button>
-              <p>
-                That will cost you { ethAmount } ETH 
-              </p>
-            </div>
-          </div>
-        )
-      }
-
-      {
-        walletConnected && claimTab && (
-          <div>
-            <p>You have { nftBalance } Moens NFTs</p>
-            <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
-            <p></p>
-          </div>
-        )
-      }
+      </div>
+    </div>
     </div>
   )
 }

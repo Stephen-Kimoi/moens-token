@@ -5,22 +5,34 @@
   text-align: center;
 }
 
-
 .card {
+  height: 100vh;
+  background: linear-gradient(90deg, rgba(240,247,243,1) 0%, rgba(180,47,47,1) 0%, rgba(105,26,103,1) 100%);
+}
+
+.header {
+  height: 10vh;
   padding: 1em;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.card h1 {
-  font-size: 2rem;
+.header h1 {
+  font-size: 1rem;
   margin: 2rem;
+  color: aliceblue;
+  border-bottom: 0.5px solid #fff; 
+  cursor: pointer;
 }
 
-.read-the-docs {
-  color: #888;
+.header p {
+  background-color: aliceblue;
+  border: none;
+  border-radius: 5px; 
+  padding: 10px;
 }
+
 
 .balances {
   display: flex;
@@ -31,6 +43,12 @@
   display: flex;
   flex-direction: column;
   margin: 2rem;
+  border: none;
+  height: 30vh;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 16px 3px rgb(184, 179, 179) inset; 
 }
 
 .warning {
@@ -39,9 +57,20 @@
   background-color: rgb(233, 233, 88);
   width: 50%; 
   margin: 0 auto;
-  margin-top: 5rem;
+  /* margin-top: 5rem; */
   height: 50px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.body {
+  background-color: aliceblue;
+  height: 80vh;
+  margin: 1rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
