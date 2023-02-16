@@ -129,6 +129,10 @@ function App() {
       getBalances(); 
       setEthAmount(0); 
       setSuccess(true); 
+      setTimeout(() => {
+        setSuccess(false)
+        setLoading(false)
+      }, 5000)
     } catch (error){
       console.error(error)
       setError(true); 
@@ -153,6 +157,7 @@ function App() {
 
   const claimNfts = async () => {
     console.log('Claiming tokens...'); 
+    setLoading(true)
     try {
       const { mtkContract } = await moensTokenContract(true); 
       const tx = await mtkContract.claim(5, {
@@ -161,9 +166,19 @@ function App() {
       console.log("Sending your tokens..."); 
       await tx.wait(); 
       console.log('Tokens sent succesfully!'); 
-      getBalances();       
+      getBalances(); 
+      setSuccess(true); 
+      setTimeout(() => {
+        setSuccess(false)
+        setLoading(false)
+      }, 5000)      
     } catch(error) {
       console.error(error)
+      setError(true); 
+      setTimeout(() => {
+        setError(false)
+        setLoading(false)
+      }, 5000)
     }
   }
 
