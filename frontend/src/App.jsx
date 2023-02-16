@@ -24,6 +24,7 @@ function App() {
   const [loading, setLoading] = useState(false); 
   const [success, setSuccess] = useState(false); 
   const [error, setError] = useState(false); 
+  const [nftsAmout, setNftsAmount] = useState(0); 
 
   const setChainName = async () => {
     try {
@@ -160,13 +161,14 @@ function App() {
     setLoading(true)
     try {
       const { mtkContract } = await moensTokenContract(true); 
-      const tx = await mtkContract.claim(5, {
+      const tx = await mtkContract.claim(nftsAmout, {
         gasLimit: 100000, 
       }); 
       console.log("Sending your tokens..."); 
       await tx.wait(); 
       console.log('Tokens sent succesfully!'); 
       getBalances(); 
+      getNftsBalance(); 
       setSuccess(true); 
       setTimeout(() => {
         setSuccess(false)
@@ -181,6 +183,19 @@ function App() {
       }, 5000)
     }
   }
+
+  const getNftsBalance = async () => {
+    console.log("Getting nfts amount...")
+    try {
+      const { mtkContract } = await moensTokenContract(false); 
+      const amount = await mtkContract.nftsRemaining(); 
+      console.log("NFTs remaining to be claimed: ", amount); 
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  getNftsBalance(); 
 
   useEffect(() => {
     getBalances(); 
@@ -303,7 +318,14 @@ function App() {
               </div>
 
               <div>
-                <p>You can only claim { mtkToBeClaimed } Moens Tokens</p>
+                <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens</p>
+                <input 
+                  type="number"
+                  placeholder="Amount of NFTs you wan to claim"
+                  onChange={ (e) => { 
+                    setNftsAmount(e.target.value); 
+                  }}
+                />
                 <button onClick={claimNfts}>
                   Claim your tokens
                 </button>
