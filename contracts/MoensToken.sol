@@ -40,9 +40,7 @@ contract MoensToken is ERC20, Ownable {
     } 
 
 
-    // THIS FUNCTION HAS AN ERROR
     function claim(uint256 _amount) public {
-        
         address sender = msg.sender; 
         console.log("Sender is: ", sender); 
         uint256 balance = IMoensNFTs(contractAddr).balanceOf(sender); 
@@ -54,7 +52,6 @@ contract MoensToken is ERC20, Ownable {
 
         require(claimedTokens[sender] != true, "You've claimed all your NFTs"); 
 
-        // uint256 tokenId; 
         uint256 amount = _amount * tokenPerNft;
         claimedNfts[sender] = balance - _amount; 
 
@@ -62,22 +59,12 @@ contract MoensToken is ERC20, Ownable {
            claimedTokens[sender] = true; 
         }
 
-        // for(uint256 i = 0; i < balance; i++){
-        //     // uint256 tokenId = MoensNFT.tokenOfOwnerByIndex(sender, i);
-        //     tokenId = IMoensNFTs(contractAddr).tokenOfOwnerByIndex(sender, i);
-
-        //     // if(!tokenIdsClaimed[tokenId]){
-        //     //     amount += 1; 
-        //     //     tokenIdsClaimed[tokenId] = true; 
-        //     // }
-        // }
-
-        // return tokenId; 
-
-        // require(amount > 0,"You have claimed all the tokens");
-
         _mint(msg.sender, amount); 
+    }
 
+    function nftsRemaining() public view returns (uint256) {
+        uint256 amount = claimedNfts[msg.sender]; 
+        return amount; 
     }
 
     function withdraw() public onlyOwner {
