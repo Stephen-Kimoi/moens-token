@@ -49,15 +49,15 @@ contract MoensToken is ERC20, Ownable {
           uint256 addressBalance = nftBalances[msg.sender]; 
            require(addressBalance >= _amount, "Insufficient NFT balance to claim tokens!"); 
            _mint(msg.sender, amount); 
-           return "Tokens sent!"; 
-        } 
-        
-        uint256 balance = IMoensNFTs(contractAddr).balanceOf(msg.sender); 
-        require(balance > 0, "You do not own any NFTs!"); 
-        _mint(msg.sender, amount); 
-        addedAddress[msg.sender] = true;
-        uint256 remainigNFTs = balance - _amount; 
-        nftBalances[msg.sender] = remainigNFTs; 
+           nftBalances[msg.sender] -= _amount; 
+        } else {
+            uint256 balance = IMoensNFTs(contractAddr).balanceOf(msg.sender); 
+            require(balance > 0, "You do not own any NFTs!"); 
+            _mint(msg.sender, amount); 
+            addedAddress[msg.sender] = true;
+            nftBalances[msg.sender] = balance - _amount; 
+        }
+
         return "Tokens sent"; 
 
         // require(balance > 0, "You do not own any Moens NFTs"); 
