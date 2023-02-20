@@ -5,6 +5,7 @@ import { contractAddress } from "../constants";
 import { moensNftContract, moensTokenContract } from './contractInstance';
 import { BigNumber, utils } from 'ethers';
 import Loader from './Loader/Loader';
+import { BallTriangle } from 'react-loader-spinner'; 
 // import { ethers } from 'ethers';
 
 function App() {
@@ -25,7 +26,9 @@ function App() {
   const [success, setSuccess] = useState(false); 
   const [error, setError] = useState(false); 
   const [nftsAmout, setNftsAmount] = useState(0); 
-
+  const [ballTriangle, setBallTriangle] = useState(false); 
+  const [goerli, setGoerli] = useState(true); 
+ 
   const setChainName = async () => {
     try {
       const chainId = await ethereum.request({ method: "eth_chainId" }); 
@@ -48,6 +51,7 @@ function App() {
   const connectWallet = async () => { 
     console.log("Connecting wallet")
     setLoading(true); 
+    setBallTriangle(true); 
     try { 
       const { ethereum } = window; 
       
@@ -62,8 +66,12 @@ function App() {
       setWalletAddress(account); 
       
       setWalletConnected(true); 
-      console.log("Account connected is: ", account); 
+      const chainId = await ethereum.request({ method: "eth_chainId" });  
 
+      if (chainId != 5){
+        setGoerli(false); 
+      }
+   
       setChainName(); 
       setSuccess(true)
       setTimeout(() => {
@@ -77,21 +85,26 @@ function App() {
       setError(false)
     }  
     setLoading(false); 
+    setBallTriangle(false); 
   } 
 
   const changeChainId = async () => {
     const { ethereum } = window; 
     const chainId = await ethereum.request({ method: "eth_chainId" });  
+    setBallTriangle(true); 
     try {
       await ethereum.request({
         method: "wallet_switchEthereumChain", 
         params: [{ chainId: "0x5" }], 
       }); 
+      setGoerli(true); 
     } catch(error) {
       console.error(error)
+      setError(true); 
     }
     setChainName(); 
     connectWallet(); 
+    setBallTriangle(false); 
     // window.location.reload(); 
   } 
 
@@ -117,6 +130,7 @@ function App() {
   const mintToken = async () => {
     console.log("Minting token...")
     setLoading(true); 
+    setBallTriangle(true); 
     try {
       const { mtkContract }  = await moensTokenContract(true); 
       const tx = await mtkContract.mint(mtkAmount, {
@@ -133,6 +147,7 @@ function App() {
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
+        setBallTriangle(false)
       }, 5000)
     } catch (error){
       console.error(error)
@@ -140,6 +155,7 @@ function App() {
       setTimeout(() => {
         setError(false)
         setLoading(false)
+        setBallTriangle(false)
       }, 5000)
     }
   }
@@ -159,9 +175,10 @@ function App() {
   const claimNfts = async () => {
     console.log('Claiming tokens...'); 
     setLoading(true)
+    setBallTriangle(true); 
     try {
       const { mtkContract } = await moensTokenContract(true); 
-      const tx = await mtkContract.claim(nftsAmout, {
+      const tx = await mtkContract.claim( {
         gasLimit: 100000, 
       }); 
       console.log("Sending your tokens..."); 
@@ -173,6 +190,7 @@ function App() {
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
+        setBallTriangle(false)
       }, 5000)      
     } catch(error) {
       console.error(error)
@@ -180,22 +198,23 @@ function App() {
       setTimeout(() => {
         setError(false)
         setLoading(false)
+        setBallTriangle(false)
       }, 5000)
     }
   }
 
-  const getNftsBalance = async () => {
-    console.log("Getting nfts amount...")
-    try {
-      const { mtkContract } = await moensTokenContract(false); 
-      const amount = await mtkContract.nftsRemaining(); 
-      console.log("NFTs remaining to be claimed: ", amount); 
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  // const getNftsBalance = async () => {
+  //   console.log("Getting nfts amount...")
+  //   try {
+  //     const { mtkContract } = await moensTokenContract(false); 
+  //     const amount = await mtkContract.nftsRemaining(); 
+  //     console.log("NFTs remaining to be claimed: ", amount); 
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
-  getNftsBalance(); 
+  // getNftsBalance(); 
 
   useEffect(() => {
     getBalances(); 
@@ -234,7 +253,15 @@ function App() {
         <div className='body'> 
           {
             loading && (
-              <Loader loading={loading} success={success} error={error} />
+              <Loader loading={loading} success={success} error={error} currentChainId={currentChainId}/>
+            )
+          }
+
+          {
+            !goerli && (
+              <div className='goerli'>
+                Switch to goerli
+              </div>
             )
           }
 
@@ -253,7 +280,7 @@ function App() {
           </div>
 
           {
-            !walletConnected && (
+            !walletConnected && !ballTriangle && (
               <div className='warning'>
                 Connect your wallet to continue
               </div>
@@ -285,7 +312,7 @@ function App() {
           }
         
         {
-          walletConnected && buyTab && (
+          walletConnected && buyTab && !ballTriangle && (
             <div className='mint'>
               <h2>Buy Tokens</h2>
               <div>
@@ -309,7 +336,7 @@ function App() {
         }
 
         {
-          walletConnected && claimTab && (
+          walletConnected && claimTab && !ballTriangle && (
             <div> 
               <h2>Claim Tokens</h2>
               <div>
@@ -319,13 +346,7 @@ function App() {
 
               <div>
                 <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens</p>
-                <input 
-                  type="number"
-                  placeholder="Amount of NFTs you wan to claim"
-                  onChange={ (e) => { 
-                    setNftsAmount(e.target.value); 
-                  }}
-                />
+  
                 <button onClick={claimNfts}>
                   Claim your tokens
                 </button>
@@ -334,6 +355,23 @@ function App() {
             </div>
           )
         }
+
+        { ballTriangle && (
+            <BallTriangle
+              height="100"
+              width="100"
+              color="rgba(105,26,103,1)"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+              outerCircleColor=""
+              innerCircleColor=""
+              barColor=""
+              ariaLabel='circles-with-bar-loading'
+            />
+          )
+        }
+
       </div>
     </div>
     </div>
