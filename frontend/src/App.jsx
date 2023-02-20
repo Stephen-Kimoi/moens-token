@@ -178,7 +178,7 @@ function App() {
     setBallTriangle(true); 
     try {
       const { mtkContract } = await moensTokenContract(true); 
-      const tx = await mtkContract.claim( {
+      const tx = await mtkContract.claim(nftsAmout, {
         gasLimit: 100000, 
       }); 
       console.log("Sending your tokens..."); 
@@ -339,6 +339,7 @@ function App() {
           walletConnected && claimTab && !ballTriangle && (
             <div> 
               <h2>Claim Tokens</h2>
+
               <div>
                 <p>You have { nftBalance } Moens NFTs</p>
                 <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
@@ -346,10 +347,19 @@ function App() {
 
               <div>
                 <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens</p>
-  
+                
+                <input 
+                  type="number"
+                  placeholder="Number of NFTs"
+                  onChange={ (e) => { 
+                    setNftsAmount(e.target.value ); 
+                  }}
+                />
+
                 <button onClick={claimNfts}>
                   Claim your tokens
                 </button>
+                
               </div>
 
             </div>
