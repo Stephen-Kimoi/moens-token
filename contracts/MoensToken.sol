@@ -15,8 +15,8 @@ contract MoensToken is ERC20, Ownable {
     uint256 public remainingSupply; 
     address contractAddr; 
     uint256 nftBalance; 
-    mapping (address => bool) claimedTokens; 
-    mapping (address => uint256) claimedNfts; 
+    mapping (address => bool) addedAddress; 
+    mapping (address => uint256) nftBalances; 
     // IMoensNFTs MoensNFT; 
 
     mapping (uint256 => bool) public tokenIdsClaimed;
@@ -40,32 +40,42 @@ contract MoensToken is ERC20, Ownable {
     } 
 
 
-    function claim(uint256 _amount) public {
-        address sender = msg.sender; 
-        console.log("Sender is: ", sender); 
-        uint256 balance = IMoensNFTs(contractAddr).balanceOf(sender); 
-        console.log("Balance is: ", balance);
-        
-        require(balance > 0, "You do not own any Moens NFTs"); 
-
-        require(claimedNfts[sender] <= 0, "You've claimed all your NFTs"); 
-
-        require(claimedTokens[sender] != true, "You've claimed all your NFTs"); 
-
+    function claim(uint256 _amount) public returns (string memory) {
+        // uint256 balance = IMoensNFTs(contractAddr).balanceOf(msg.sender); 
+        // nftBalances[msg.sender] = balance; 
         uint256 amount = _amount * tokenPerNft;
-        claimedNfts[sender] = balance - _amount; 
 
-        if (claimedNfts[sender] == 0){
-           claimedTokens[sender] = true; 
-        }
-
+        if(addedAddress[msg.sender] == true){  
+          uint256 addressBalance = nftBalances[msg.sender]; 
+           require(addressBalance >= _amount, "Insufficient NFT balance to claim tokens!"); 
+           _mint(msg.sender, amount); 
+           return "Tokens sent!"; 
+        } 
+        
+        uint256 balance = IMoensNFTs(contractAddr).balanceOf(msg.sender); 
+        require(balance > 0, "You do not own any NFTs!"); 
         _mint(msg.sender, amount); 
+        addedAddress[msg.sender] = true;
+        uint256 remainigNFTs = balance - _amount; 
+        nftBalances[msg.sender] = remainigNFTs; 
+        return "Tokens sent"; 
+
+        // require(balance > 0, "You do not own any Moens NFTs"); 
+        // require(usersBalance >= _amount, "Insufficient NFT balance to claim tokens!"); 
+        // uint256 amount = _amount * tokenPerNft;
+        // _mint(msg.sender, amount); 
+
+        // uint256 remainigNFTs = balance - _amount; 
+        // nftBalances[msg.sender] = remainigNFTs; 
+
+        // require(claimedTokens[msg.sender] != true, "You've claimed all your NFTs"); 
+        // claimedTokens[msg.sender] = true; 
     }
 
-    function nftsRemaining() public view returns (uint256) {
-        uint256 amount = claimedNfts[msg.sender]; 
-        return amount; 
-    }
+    // function nftsRemaining() public view returns (uint256) {
+    //     uint256 amount = claimedNfts[msg.sender]; 
+    //     return amount; 
+    // }
 
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance; 
