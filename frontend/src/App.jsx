@@ -28,6 +28,7 @@ function App() {
   const [nftsAmout, setNftsAmount] = useState(0); 
   const [ballTriangle, setBallTriangle] = useState(false); 
   const [goerli, setGoerli] = useState(true); 
+  const [claimedNFTAmount, setClaimedNFTAmount] = useState(0); 
  
   const setChainName = async () => {
     try {
@@ -187,6 +188,7 @@ function App() {
       getBalances(); 
       getNftsBalance(); 
       setSuccess(true); 
+      setClaimedNFTAmount(curr => curr + nftsAmout); 
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
@@ -341,12 +343,15 @@ function App() {
               <h2>Claim Tokens</h2>
 
               <div>
-                <p>You have { nftBalance } Moens NFTs</p>
-                <p>Buy <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a></p>
+                <p>You have { nftBalance } Moens NFTs.
+                  You can buy more <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a>
+                </p>
               </div>
 
               <div>
-                <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens</p>
+                <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens.
+                  So far you've already redeemed { claimedNFTAmount } NFTs
+                </p>
                 
                 <input 
                   type="number"
@@ -359,7 +364,7 @@ function App() {
                 <button onClick={claimNfts}>
                   Claim your tokens
                 </button>
-                
+
               </div>
 
             </div>
