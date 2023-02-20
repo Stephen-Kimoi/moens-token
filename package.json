@@ -18,8 +18,10 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
+    "@tanem/react-nprogress": "^5.0.29",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
+    "react-loader-spinner": "^5.3.4",
     "web3": "^1.8.1"
   }
 }
