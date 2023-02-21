@@ -97,3 +97,10 @@
   border-radius: 10px;
   background-color: rgb(233, 233, 88);
 }
+
+.claim-input {
+  height: 35px;
+  border-radius: 5px;
+  border: none;
+  background-color: rgb(185, 183, 180);
+}

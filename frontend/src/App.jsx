@@ -186,9 +186,9 @@ function App() {
       await tx.wait(); 
       console.log('Tokens sent succesfully!'); 
       getBalances(); 
-      getNftsBalance(); 
+      // getNftsBalance(); 
       setSuccess(true); 
-      setClaimedNFTAmount(curr => curr + nftsAmout); 
+      setClaimedNFTAmount(curr => curr + 1); 
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
@@ -221,6 +221,7 @@ function App() {
   useEffect(() => {
     getBalances(); 
     nftBalances(); 
+    // setClaimedNFTAmount(curr => curr + 1); 
   })
 
   return (
@@ -354,6 +355,7 @@ function App() {
                 </p>
                 
                 <input 
+                  className='claim-input'
                   type="number"
                   placeholder="Number of NFTs"
                   onChange={ (e) => { 

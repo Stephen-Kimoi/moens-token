@@ -42,9 +42,12 @@ You can then check your MTK balance and you eth balance in this tab
 ## CLAIM TOKENS
 You can also reddem [Moens NFTs](https://moens-nft-collection.netlify.app/) 
 
-The tokens that one claim for 1 Moens Token are `10 MTK`
-i.e `1 Moens Token = 10 MTK` 
+The tokens that one claim for 1 Moens Token are `10 MTK` i.e `1 Moens Token = 10 MTK` 
 
+Click on the `Claim Tokens` button
+Enter the number of tokens you'd like to redeem & follow the metamask prompt. 
+
+![Claim tab](./images/claim.png)
 
 ### DISCLAIMER!!
 This site can only work if you have [metamask](https://metamask.io/) installed. 
