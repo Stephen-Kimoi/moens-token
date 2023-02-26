@@ -338,18 +338,18 @@ function App() {
               <h2>Claim Tokens</h2>
 
               <div>
-                <p>You have { nftBalance } Moens NFTs.
-                  You can buy more <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a>
+                <p>You have { nftBalance } Moens NFTs.<br/>
+                  So far you've already redeemed { claimedNFTAmount } NFTs
                 </p>
               </div>
 
               <div>
                 <p>You can only claim a total of { mtkToBeClaimed } Moens Tokens.
-                  So far you've already redeemed { claimedNFTAmount } NFTs
+                  Buy more <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a>
                 </p>
                 
                 {
-                  !redeemNFTs ? (
+                  redeemNFTs ? (
                     <div className='warning redeem'>
                       <p>
                       You've redeemed all your NFTs<br/>
