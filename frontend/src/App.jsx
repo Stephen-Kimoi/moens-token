@@ -29,6 +29,7 @@ function App() {
   const [ballTriangle, setBallTriangle] = useState(false); 
   const [goerli, setGoerli] = useState(true); 
   const [claimedNFTAmount, setClaimedNFTAmount] = useState(0); 
+  const [redeemNFTs, setRedeemNFTs] = useState(false); 
  
   const setChainName = async () => {
     try {
@@ -168,6 +169,13 @@ function App() {
       const addressBalance = await nftContract.balanceOf(address); 
       setNftBalance(Number(addressBalance)); 
       setMtkToBeClaimed(Number(addressBalance) * 10); 
+
+      if (claimedNFTAmount === nftBalance){
+        setRedeemNFTs(true)
+      } else {
+        setRedeemNFTs(false)
+      }
+
     } catch(error){
       console.error(error)
     }
@@ -188,7 +196,7 @@ function App() {
       getBalances(); 
       // getNftsBalance(); 
       setSuccess(true); 
-      setClaimedNFTAmount(curr => curr + 1); 
+      setClaimedNFTAmount(curr => parseInt(curr) + parseInt(nftsAmout)); 
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
@@ -205,23 +213,9 @@ function App() {
     }
   }
 
-  // const getNftsBalance = async () => {
-  //   console.log("Getting nfts amount...")
-  //   try {
-  //     const { mtkContract } = await moensTokenContract(false); 
-  //     const amount = await mtkContract.nftsRemaining(); 
-  //     console.log("NFTs remaining to be claimed: ", amount); 
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // getNftsBalance(); 
-
   useEffect(() => {
     getBalances(); 
     nftBalances(); 
-    // setClaimedNFTAmount(curr => curr + 1); 
   })
 
   return (
@@ -354,18 +348,31 @@ function App() {
                   So far you've already redeemed { claimedNFTAmount } NFTs
                 </p>
                 
-                <input 
-                  className='claim-input'
-                  type="number"
-                  placeholder="Number of NFTs"
-                  onChange={ (e) => { 
-                    setNftsAmount(e.target.value ); 
-                  }}
-                />
+                {
+                  !redeemNFTs ? (
+                    <div className='warning redeem'>
+                      <p>
+                      You've redeemed all your NFTs<br/>
+                      Buy more <a href='https://moens-nft-collection.netlify.app/'> Moens NFTs </a>
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                    <input 
+                      className='claim-input'
+                      type="number"
+                      placeholder="Number of NFTs"
+                      onChange={ (e) => { 
+                        setNftsAmount(e.target.value ); 
+                      }}
+                    />
 
-                <button onClick={claimNfts}>
-                  Claim your tokens
-                </button>
+                    <button onClick={claimNfts}>
+                      Claim your tokens
+                    </button>
+                </div>
+                  )
+                }
 
               </div>
 
