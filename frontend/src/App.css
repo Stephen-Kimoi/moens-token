@@ -104,3 +104,9 @@
   border: none;
   background-color: rgb(185, 183, 180);
 }
+
+.redeem {
+  height: 100px;
+  width: 500px; 
+  margin-top: 10px;
+}
