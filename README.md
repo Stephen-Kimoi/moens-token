@@ -49,7 +49,12 @@ Enter the number of tokens you'd like to redeem & follow the metamask prompt.
 
 ![Claim tab](./images/claim.png)
 
-### DISCLAIMER!!
+If you have redeemed all your NFTs you'll see this waring
+![redeem](./images/redeem.png)
+
+Proceed to buy more [Moens NFTs](https://moens-nft-collection.netlify.app/) 
+
+# DISCLAIMER!!
 This site can only work if you have [metamask](https://metamask.io/) installed. 
 
 You also need some [GoerliETH](https://goerlifaucet.com/ ) to be able to mint an NFT. 
