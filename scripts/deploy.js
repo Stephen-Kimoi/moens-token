@@ -11,6 +11,7 @@
 // Moens Token contract address:  0x62F0371059f298af6aBB5cD41FCD506667223083
 // Moens Token contract address:  0xbD521EcF42F312f91718521Ac140BFB9Df7a9BB6
 // Moens Token contract address:  0xf7bf855BA61E29679733a97d24892E10f897194b
+// Moens Token contract address:  0x08E3f9c55413758b71887294910eaD42ABD6b5bb
 
 const { ethers } = require("hardhat"); 
 require("dotenv").config({ path: ".env" }); 
