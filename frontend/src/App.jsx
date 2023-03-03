@@ -196,7 +196,13 @@ function App() {
       getBalances(); 
       // getNftsBalance(); 
       setSuccess(true); 
-      setClaimedNFTAmount(curr => parseInt(curr) + parseInt(nftsAmout)); 
+      let claimedNfts; 
+      const currentValue = localStorage.getItem(claimedNfts); 
+      const newValue = currentValue ? parseInt(currentValue) + parseInt(nftsAmout) : nftsAmout; 
+      localStorage.setItem(claimedNfts, newValue.toString()); 
+      console.log("New value: ", newValue); 
+      setClaimedNFTAmount(curr => parseInt(curr) + parseInt(newValue)); 
+      // setClaimedNFTAmount(newValue); 
       setTimeout(() => {
         setSuccess(false)
         setLoading(false)
@@ -213,9 +219,16 @@ function App() {
     }
   }
 
+  const setClaimedNft = () => {
+    let claimedNfts; 
+    const currentValue = localStorage.getItem(claimedNfts);
+    setClaimedNFTAmount(currentValue);
+  }
+
   useEffect(() => {
     getBalances(); 
     nftBalances(); 
+    setClaimedNft(); 
   })
 
   return (
